@@ -249,7 +249,7 @@ async function discoverStoryPointsField() {
 
 async function fetchJiraIssues(jql) {
   const params = new URLSearchParams({ jql, maxResults: 30, fields: `summary,${storyPointsField}` });
-  const data = await jiraFetch(`/rest/api/3/search?${params}`);
+  const data = await jiraFetch(`/rest/api/3/search/jql?${params}`);
   return data.issues ?? [];
 }
 
