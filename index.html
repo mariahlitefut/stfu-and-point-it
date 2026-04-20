@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>STFU and Point It</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- SCREEN: Jira Connect (host) -->
+  <div id="screen-jira" class="screen active">
+    <div class="card center-card">
+      <h1>🃏 STFU and Point It</h1>
+      <p class="subtitle">Connect Jira to get started.</p>
+      <div class="form-group">
+        <label>Jira domain</label>
+        <input id="input-jira-domain" type="text" placeholder="yourcompany.atlassian.net" />
+      </div>
+      <div class="form-group">
+        <label>Your Jira email</label>
+        <input id="input-jira-email" type="email" placeholder="you@company.com" />
+      </div>
+      <div class="form-group">
+        <label>API token <a href="https://id.atlassian.com/manage-profile/security/api-tokens" target="_blank" class="link-muted">(get one here)</a></label>
+        <input id="input-jira-token" type="password" placeholder="paste token" />
+      </div>
+      <button id="btn-connect-jira" class="btn-primary btn-full">Connect Jira</button>
+      <p id="jira-error" class="error hidden"></p>
+    </div>
+  </div>
+
+  <!-- SCREEN: Pick Tickets (host) -->
+  <div id="screen-tickets" class="screen">
+    <div class="ticket-picker-layout">
+      <div class="ticket-picker-header">
+        <h2>Pick tickets for this session</h2>
+        <button id="btn-start-session" class="btn-primary" disabled>Start Session →</button>
+      </div>
+
+      <div class="ticket-picker-body">
+        <!-- Search -->
+        <div class="picker-panel">
+          <div class="search-bar-wrap">
+            <input id="input-search" type="text" placeholder="Search by keyword or ticket key (e.g. CAP-123)…" />
+            <button id="btn-search" class="btn-secondary">Search</button>
+          </div>
+          <p id="search-error" class="error hidden"></p>
+          <div id="search-results" class="results-list"></div>
+        </div>
+
+        <!-- Selected -->
+        <div class="picker-panel">
+          <h3>Session tickets <span id="selected-count" class="badge">0</span></h3>
+          <div id="selected-tickets" class="results-list empty-state">
+            <p class="muted">Add tickets from the search →</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SCREEN: Join (teammates) -->
+  <div id="screen-join" class="screen">
+    <div class="card center-card">
+      <h1>🃏 STFU and Point It</h1>
+      <p class="subtitle">You've been invited to a pointing session.</p>
+      <div class="form-group">
+        <label>Your name</label>
+        <input id="input-name" type="text" placeholder="e.g. Alex" />
+      </div>
+      <button id="btn-join" class="btn-primary btn-full">Join Session</button>
+    </div>
+  </div>
+
+  <!-- SCREEN: Voting Room -->
+  <div id="screen-room" class="screen">
+    <header class="room-header">
+      <div class="room-info">
+        <span class="room-label">Room</span>
+        <span id="room-code-display" class="room-code"></span>
+        <button id="btn-copy-link" class="btn-ghost btn-sm">Copy invite link</button>
+      </div>
+      <div id="host-controls" class="host-controls hidden">
+        <select id="ticket-select"></select>
+        <button id="btn-reveal" class="btn-secondary">Reveal</button>
+        <button id="btn-reset" class="btn-ghost">Reset</button>
+        <button id="btn-save-points" class="btn-primary hidden">Save to Jira</button>
+        <button id="btn-end-session" class="btn-danger">End Session</button>
+      </div>
+    </header>
+
+    <main class="room-main">
+      <div id="ticket-display" class="ticket-display">
+        <p class="muted">Waiting for host to pick a ticket…</p>
+      </div>
+
+      <div id="cards-area" class="cards-area">
+        <div id="point-cards" class="point-cards"></div>
+      </div>
+
+      <div id="votes-area" class="votes-area">
+        <h3>Team votes</h3>
+        <div id="votes-list" class="votes-list"></div>
+      </div>
+
+      <div id="result-area" class="result-area hidden">
+        <div class="result-box">
+          <span class="result-label">Agreed points</span>
+          <div id="final-points-picker" class="final-points-picker"></div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script src="supabase-config.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
