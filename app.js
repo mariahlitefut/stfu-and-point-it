@@ -253,11 +253,17 @@ async function fetchJiraIssues(jql) {
   return data.issues ?? [];
 }
 
-async function jiraFetch(path) {
+async function jiraFetch(path, options = {}) {
   const { domain, email, token } = jiraConfig;
   const base64 = btoa(`${email}:${token}`);
-  const res = await fetch(`https://${domain}${path}`, {
-    headers: { Authorization: `Basic ${base64}`, Accept: 'application/json' },
+  const res = await fetch(`${PROXY_URL}/proxy/${domain}${path}`, {
+    ...options,
+    headers: {
+      Authorization: `Basic ${base64}`,
+      Accept: 'application/json',
+      'Content-Type': 'application/json',
+      ...(options.headers || {}),
+    },
   });
   if (!res.ok) {
     const msg = await res.text();
@@ -335,12 +341,10 @@ async function handleSavePoints() {
   btn.disabled = true;
   btn.textContent = 'Saving…';
   try {
-    const { domain, email, token } = jiraConfig;
-    const base64 = btoa(`${email}:${token}`);
-    const res = await fetch(`https://${domain}/rest/api/3/issue/${currentTicket.key}`, {
+    const res = await fetch(`${PROXY_URL}/proxy/${jiraConfig.domain}/rest/api/3/issue/${currentTicket.key}`, {
       method: 'PUT',
       headers: {
-        Authorization: `Basic ${base64}`,
+        Authorization: `Basic ${btoa(`${jiraConfig.email}:${jiraConfig.token}`)}`,
         'Content-Type': 'application/json',
         Accept: 'application/json',
       },
