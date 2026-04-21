@@ -230,7 +230,8 @@ function enterRoom() {
   document.getElementById('room-code-display').textContent = roomId;
   if (isHost) document.getElementById('host-controls').classList.remove('hidden');
   subscribeToRoom();
-  upsertParticipant(null);
+  await upsertParticipant(null);
+  await refreshVotes();
   updateUrl();
   showScreen('screen-room');
 
