@@ -96,14 +96,17 @@ button:disabled { opacity: .4; cursor: not-allowed; }
 .hidden { display: none !important; }
 
 /* ── Ticket Picker ─────────────────────────────────────────────────────── */
-#screen-tickets { padding: 2rem; }
+#screen-tickets {
+  padding: 2rem;
+  align-items: center;
+  justify-content: center;
+}
 
 .ticket-picker-layout {
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
   max-width: 1000px;
-  margin: 0 auto;
   width: 100%;
 }
 
