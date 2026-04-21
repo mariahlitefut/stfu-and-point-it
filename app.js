@@ -424,9 +424,10 @@ function renderTicket(ticket) {
     el.innerHTML = '<p class="muted">Waiting for host to pick a ticket…</p>';
     return;
   }
+  const ticketUrl = ticket.url || (jiraConfig ? `https://${jiraConfig.domain}/browse/${ticket.key}` : null);
   el.innerHTML = `
     <div class="ticket-key">
-      ${ticket.url ? `<a href="${ticket.url}" target="_blank" rel="noopener">${ticket.key}</a>` : ticket.key}
+      ${ticketUrl ? `<a href="${ticketUrl}" target="_blank" rel="noopener">${ticket.key}</a>` : ticket.key}
     </div>
     <div class="ticket-summary">${escHtml(ticket.summary)}</div>
     ${ticket.description ? `<div class="ticket-desc">${escHtml(ticket.description)}</div>` : ''}
