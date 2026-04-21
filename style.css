@@ -277,8 +277,11 @@ select:focus { border-color: var(--accent); }
   width: 100%;
 }
 .ticket-key { font-size: .8rem; font-weight: 700; color: var(--accent); letter-spacing: .05em; margin-bottom: .35rem; }
+.ticket-key a { color: var(--accent); text-decoration: none; }
+.ticket-key a:hover { text-decoration: underline; }
 .ticket-summary { font-size: 1.15rem; font-weight: 600; }
-.ticket-desc { font-size: .875rem; color: var(--muted); margin-top: .5rem; }
+.ticket-desc { font-size: .875rem; color: var(--muted); margin-top: .5rem; line-height: 1.5; }
+.ticket-points { font-size: .8rem; color: var(--muted); margin-top: .5rem; }
 
 /* Point cards */
 .cards-area { width: 100%; }

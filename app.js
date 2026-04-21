@@ -108,7 +108,7 @@ async function handleSearch() {
             <span class="ticket-key">${i.key}</span>
             <span class="result-summary">${escHtml(i.fields.summary)}</span>
           </div>
-          <button class="btn-add ${alreadyAdded ? 'btn-added' : ''}" data-key="${i.key}" data-summary="${escHtml(i.fields.summary)}" ${alreadyAdded ? 'disabled' : ''}>
+          <button class="btn-add ${alreadyAdded ? 'btn-added' : ''}" data-key="${i.key}" data-summary="${escHtml(i.fields.summary)}" data-description="${escHtml(adfToText(i.fields.description))}" ${alreadyAdded ? 'disabled' : ''}>
             ${alreadyAdded ? 'Added' : '+ Add'}
           </button>
         </div>
@@ -116,7 +116,7 @@ async function handleSearch() {
     }).join('');
 
     resultsEl.querySelectorAll('.btn-add:not(:disabled)').forEach(btn => {
-      btn.addEventListener('click', () => addTicket(btn.dataset.key, btn.dataset.summary));
+      btn.addEventListener('click', () => addTicket(btn.dataset.key, btn.dataset.summary, btn.dataset.description));
     });
   } catch (e) {
     errEl.textContent = e.message;
@@ -125,9 +125,10 @@ async function handleSearch() {
   }
 }
 
-function addTicket(key, summary) {
+function addTicket(key, summary, description = '') {
   if (selectedTickets.some(t => t.key === key)) return;
-  selectedTickets.push({ key, summary, points: null });
+  const url = `https://${jiraConfig.domain}/browse/${key}`;
+  selectedTickets.push({ key, summary, description, url, points: null });
   renderSelectedTickets();
   updateStartButton();
 
@@ -248,9 +249,16 @@ async function discoverStoryPointsField() {
 }
 
 async function fetchJiraIssues(jql) {
-  const params = new URLSearchParams({ jql, maxResults: 30, fields: `summary,${storyPointsField}` });
+  const params = new URLSearchParams({ jql, maxResults: 30, fields: `summary,description,${storyPointsField}` });
   const data = await jiraFetch(`/rest/api/3/search/jql?${params}`);
   return data.issues ?? [];
+}
+
+function adfToText(node) {
+  if (!node) return '';
+  if (node.type === 'text') return node.text ?? '';
+  if (node.content) return node.content.map(adfToText).join('');
+  return '';
 }
 
 async function jiraFetch(path, options = {}) {
@@ -416,9 +424,12 @@ function renderTicket(ticket) {
     return;
   }
   el.innerHTML = `
-    <div class="ticket-key">${ticket.key}</div>
+    <div class="ticket-key">
+      ${ticket.url ? `<a href="${ticket.url}" target="_blank" rel="noopener">${ticket.key}</a>` : ticket.key}
+    </div>
     <div class="ticket-summary">${escHtml(ticket.summary)}</div>
-    ${ticket.points != null ? `<div class="ticket-desc">Current points: ${ticket.points}</div>` : ''}
+    ${ticket.description ? `<div class="ticket-desc">${escHtml(ticket.description)}</div>` : ''}
+    ${ticket.points != null ? `<div class="ticket-points">Current points: ${ticket.points}</div>` : ''}
   `;
 }
 
