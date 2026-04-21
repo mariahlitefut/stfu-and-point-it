@@ -99,7 +99,8 @@ button:disabled { opacity: .4; cursor: not-allowed; }
 #screen-tickets {
   padding: 2rem;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start;
+  padding-top: 4rem;
 }
 
 .ticket-picker-layout {
