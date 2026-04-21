@@ -292,12 +292,7 @@ async function handleTicketChange() {
   const key = document.getElementById('ticket-select').value;
   const ticket = room.tickets.find(t => t.key === key);
   await db.from('rooms').update({ current_ticket: ticket, revealed: false }).eq('id', roomId);
-  await db.from('votes').delete().eq('room_id', roomId);
-  selectedVote = null;
-  selectedFinalPoints = null;
-  document.querySelectorAll('.point-card').forEach(c => c.classList.remove('selected'));
-  document.getElementById('result-area').classList.add('hidden');
-  document.getElementById('btn-save-points').classList.add('hidden');
+  await db.from('votes').update({ vote: null }).eq('room_id', roomId);
 }
 
 // ── Voting ─────────────────────────────────────────────────────────────────
