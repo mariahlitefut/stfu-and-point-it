@@ -333,14 +333,8 @@ async function handleReveal() {
 }
 
 async function handleReset() {
-  selectedVote = null;
-  selectedFinalPoints = null;
-  document.querySelectorAll('.point-card').forEach(c => c.classList.remove('selected'));
-  document.getElementById('result-area').classList.add('hidden');
-  document.getElementById('btn-save-points').classList.add('hidden');
   await db.from('rooms').update({ revealed: false }).eq('id', roomId);
-  await db.from('votes').delete().eq('room_id', roomId);
-  await upsertParticipant(null);
+  await db.from('votes').update({ vote: null }).eq('room_id', roomId);
 }
 
 // ── Save to Jira ───────────────────────────────────────────────────────────
@@ -411,6 +405,16 @@ async function refreshVotes(revealed) {
   if (isRevealed === undefined) {
     const { data: room } = await db.from('rooms').select('revealed').eq('id', roomId).single();
     isRevealed = room?.revealed ?? false;
+  }
+
+  // If our vote was cleared by a reset, clear local card selection
+  const myVote = votes.find(v => v.user_id === userId);
+  if (myVote && myVote.vote === null && selectedVote !== null) {
+    selectedVote = null;
+    selectedFinalPoints = null;
+    document.querySelectorAll('.point-card').forEach(c => c.classList.remove('selected'));
+    document.getElementById('result-area').classList.add('hidden');
+    document.getElementById('btn-save-points').classList.add('hidden');
   }
 
   renderVotes(votes, isRevealed);
