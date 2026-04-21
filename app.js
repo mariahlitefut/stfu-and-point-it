@@ -226,7 +226,7 @@ async function handleJoin() {
   syncRoomState(room);
 }
 
-function enterRoom() {
+async function enterRoom() {
   document.getElementById('room-code-display').textContent = roomId;
   if (isHost) document.getElementById('host-controls').classList.remove('hidden');
   subscribeToRoom();
