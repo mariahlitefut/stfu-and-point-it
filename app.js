@@ -370,6 +370,7 @@ async function handleSavePoints() {
 // ── End session ────────────────────────────────────────────────────────────
 async function handleEndSession() {
   if (!confirm('End the session? This will delete the room for everyone.')) return;
+  await db.from('votes').delete().eq('room_id', roomId);
   await db.from('rooms').delete().eq('id', roomId);
   location.href = location.pathname;
 }
