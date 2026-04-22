@@ -284,7 +284,7 @@ async function jiraFetch(path, options = {}) {
 // ── Ticket select (host in room) ───────────────────────────────────────────
 function populateTicketSelect(tickets) {
   const sel = document.getElementById('ticket-select');
-  sel.innerHTML = tickets.map(t => `<option value="${t.key}">${t.key} — ${escHtml(t.summary)}</option>`).join('');
+  sel.innerHTML = tickets.map(t => `<option value="${t.key}">${t.key}</option>`).join('');
 }
 
 async function handleTicketChange() {
