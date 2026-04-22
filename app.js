@@ -289,6 +289,7 @@ function populateTicketSelect(tickets) {
 
 async function handleTicketChange() {
   const { data: room } = await db.from('rooms').select('tickets').eq('id', roomId).single();
+  if (!room) return;
   const key = document.getElementById('ticket-select').value;
   const ticket = room.tickets.find(t => t.key === key);
   await db.from('rooms').update({ current_ticket: ticket, revealed: false }).eq('id', roomId);
@@ -310,11 +311,16 @@ async function selectCard(card) {
   document.querySelectorAll('.point-card').forEach(c => c.classList.remove('selected'));
   card.classList.add('selected');
   selectedVote = card.dataset.value;
-  await upsertParticipant(selectedVote);
+  const { error } = await upsertParticipant(selectedVote);
+  if (error) {
+    card.classList.remove('selected');
+    selectedVote = null;
+    alert('Failed to record vote. Check your connection and try again.');
+  }
 }
 
 async function upsertParticipant(vote) {
-  await db.from('votes').upsert({
+  return db.from('votes').upsert({
     room_id: roomId,
     user_id: userId,
     user_name: userName,
@@ -324,11 +330,13 @@ async function upsertParticipant(vote) {
 
 // ── Reveal / Reset ─────────────────────────────────────────────────────────
 async function handleReveal() {
-  await db.from('rooms').update({ revealed: true }).eq('id', roomId);
+  const { error } = await db.from('rooms').update({ revealed: true }).eq('id', roomId);
+  if (error) alert('Failed to reveal votes. Try again.');
 }
 
 async function handleReset() {
-  await db.from('rooms').update({ revealed: false }).eq('id', roomId);
+  const { error } = await db.from('rooms').update({ revealed: false }).eq('id', roomId);
+  if (error) { alert('Failed to reset. Try again.'); return; }
   await db.from('votes').update({ vote: null }).eq('room_id', roomId);
 }
 
@@ -457,7 +465,7 @@ function showResultPicker(votes) {
   document.getElementById('btn-save-points').classList.remove('hidden');
 
   picker.innerHTML = FIBONACCI.filter(v => v !== '?').map(v => `
-    <button class="final-point-btn ${selectedFinalPoints == v ? 'selected' : ''}" data-value="${v}">${v}</button>
+    <button class="final-point-btn ${String(selectedFinalPoints) === String(v) ? 'selected' : ''}" data-value="${v}">${v}</button>
   `).join('');
 
   picker.querySelectorAll('.final-point-btn').forEach(btn => {
